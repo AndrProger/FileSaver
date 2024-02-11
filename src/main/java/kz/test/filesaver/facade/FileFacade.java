@@ -13,11 +13,6 @@ public class FileFacade {
         this.fileRepository = fileRepository;
     }
 
-    public FileEntity findById(Long id) {
-        return fileRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("File not found with id: " + id));
-    }
-
     public FileEntity save(FileEntity fileEntity) {
         return fileRepository.save(fileEntity);
     }
