@@ -2,7 +2,7 @@ server:
   port: ${SERVER_PORT:80}
 
 file:
-  storage-path: src/main/resources/files
+  storage-path: ${FILE_PATH:src/main/resources/files}
 
 spring:
   datasource:
