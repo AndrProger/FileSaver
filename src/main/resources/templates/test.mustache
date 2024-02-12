@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat and File Management</title>
+    <script>
+        // JavaScript код будет здесь
+    </script>
+</head>
+<body>
+<h2>WebSocket Chat</h2>
+<textarea id="chat" cols="30" rows="10" readonly></textarea><br>
+<input type="text" id="message" placeholder="Enter message">
+<button onclick="sendMessage()">Send</button>
+<button onclick="sendPing()">Send PING</button>
+
+<h2>File Upload</h2>
+<form id="fileUploadForm">
+    <input type="file" id="fileInput" name="file">
+    <button type="button" onclick="uploadFile()">Upload File</button>
+</form>
+<div id="uploadResult"></div>
+
+<h2>File Download and Info</h2>
+<input type="text" id="fileName" placeholder="Enter file name">
+<button onclick="downloadFile()">Download File</button>
+<button onclick="fetchFileInfo()">Fetch File Info</button>
+<div id="fileInfo"></div>
+
+<script>
+    let webSocket;
+    let chatBox = document.getElementById("chat");
+    let messageBox = document.getElementById("message");
+    let uploadResult = document.getElementById("uploadResult");
+    let fileInfo = document.getElementById("fileInfo");
+    let fileNameInput = document.getElementById("fileName");
+
+    document.addEventListener("DOMContentLoaded", openWebSocket);
+
+    function openWebSocket() {
+        webSocket = new WebSocket("ws://localhost/ws");
+
+        webSocket.onopen = function(event) {
+            chatBox.value += "Connection established\n";
+        };
+
+        webSocket.onmessage = function(event) {
+            chatBox.value += "Received: " + event.data + "\n";
+        };
+
+        webSocket.onclose = function(event) {
+            chatBox.value += "Connection closed\n";
+        };
+    }
+
+    function sendMessage() {
+        let message = messageBox.value;
+        webSocket.send(message);
+        messageBox.value = "";
+    }
+
+    function sendPing() {
+        webSocket.send("PING");
+    }
+
+    function uploadFile() {
+        let formData = new FormData(document.getElementById("fileUploadForm"));
+        fetch("http://localhost/file/upload", {
+            method: "POST",
+            body: formData
+        }).then(response => response.text())
+                .then(data => uploadResult.textContent = data)
+                .catch(error => uploadResult.textContent = "Error: " + error);
+    }
+
+    function downloadFile() {
+        let fileName = fileNameInput.value;
+        fetch(`http://localhost/file/execute-command`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ command: "fileDownload", fileName: fileName })
+        })
+                .then(response => response.blob())
+                .then(blob => {
+                    // Создаем ссылку на скачиваемый файл
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Освобождаем ресурсы
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error => console.error('Download error:', error));
+    }
+
+
+    function fetchFileInfo() {
+        let fileName = fileNameInput.value;
+        fetch(`http://localhost/file/execute-command`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ command: "fileInfo", fileName: fileName })
+        }).then(response => response.json())
+                .then(data => fileInfo.textContent = JSON.stringify(data))
+                .catch(error => fileInfo.textContent = "Error: " + error);
+    }
+</script>
+</body>
+</html>

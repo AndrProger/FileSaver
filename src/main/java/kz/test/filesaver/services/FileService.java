@@ -59,6 +59,7 @@ public class FileService {
     fileEntity.setFilePath(filePath.toString());
     fileFacade.save(fileEntity);
 
+    info("File uploaded successfully: " + fileName);
     return "File uploaded successfully: " + fileName;
   }
 
