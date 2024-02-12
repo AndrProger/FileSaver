@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommandRequestDTO {
-    private String command;
-    private String fileName;
+  private String command;
+  private String fileName;
 }
