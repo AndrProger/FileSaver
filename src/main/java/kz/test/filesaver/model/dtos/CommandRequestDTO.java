@@ -10,6 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommandRequestDTO {
+  /**
+   * The command to be executed.
+   */
   private String command;
+
+  /**
+   * The name of the file on which the command will be executed.
+   */
   private String fileName;
 }
