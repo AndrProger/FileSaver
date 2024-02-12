@@ -33,6 +33,13 @@ public class FileService {
     this.fileCommands = fileCommands;
   }
 
+  /**
+   * Stores the given file in the file system and saves its metadata in the database.
+   *
+   * @param file the file to be stored
+   * @return a success message if the file is stored successfully
+   * @throws FileSaveException if an error occurs while saving the file
+   */
   public String storeFile(MultipartFile file) {
     String fileName = file.getOriginalFilename();
     LocalDateTime fileDate = FileNameParser.parseDateFromFileName(fileName);
@@ -43,7 +50,6 @@ public class FileService {
     try {
       Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      error("Error saving file: " + fileName + " " + e.getMessage());
       throw new FileSaveException("Error saving file: " + fileName);
     }
 
@@ -53,24 +59,35 @@ public class FileService {
     fileEntity.setFilePath(filePath.toString());
     fileFacade.save(fileEntity);
 
-    info("File uploaded successfully: " + fileName);
     return "File uploaded successfully: " + fileName;
   }
 
+  /**
+   * Prepares the directory and returns the file path for the given file name.
+   *
+   * @param fileName the name of the file for which the path is to be prepared
+   * @return the path of the file in the prepared directory
+   * @throws FileSaveException if an error occurs while creating the directory
+   */
   private Path prepareDirectoryAndGetFilePath(String fileName) {
     Path directoryPath = Paths.get(storagePath);
     try {
       if (!Files.exists(directoryPath)) {
         Files.createDirectories(directoryPath);
-        info("Directory created: " + directoryPath);
       }
     } catch (IOException e) {
-      error("Error creating directory: " + directoryPath + " message: " + e);
       throw new FileSaveException("Error creating directory: " + directoryPath);
     }
     return directoryPath.resolve(fileName);
   }
 
+  /**
+   * Executes the command specified in the given CommandRequestDTO.
+   *
+   * @param commandRequestDTO the DTO containing the command to be executed and the file name
+   * @return the result of the command execution
+   * @throws UnsupportedOperationException if the command is not supported
+   */
   public Object executeCommand(CommandRequestDTO commandRequestDTO) {
     for (val fileCommand : fileCommands) {
       if (fileCommand.checkCommand(commandRequestDTO.getCommand())) {
@@ -80,6 +97,6 @@ public class FileService {
     }
     error("Command not supported: " + commandRequestDTO.getCommand());
     throw new UnsupportedOperationException(
-        "Command not supported: " + commandRequestDTO.getCommand());
+            "Command not supported: " + commandRequestDTO.getCommand());
   }
 }
