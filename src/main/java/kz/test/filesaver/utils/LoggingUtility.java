@@ -7,21 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
- * This class provides utility methods for logging.
- * It logs messages at different levels (INFO, DEBUG, ERROR) and saves them in a repository.
+ * This class provides utility methods for logging. It logs messages at different levels (INFO,
+ * DEBUG, ERROR) and saves them in a repository.
  */
 @Component
 @Slf4j
 public class LoggingUtility {
 
-  /**
-   * The singleton instance of LoggingUtility.
-   */
+  /** The singleton instance of LoggingUtility. */
   private static LoggingUtility instance;
 
-  /**
-   * The repository where log entries are saved.
-   */
+  /** The repository where log entries are saved. */
   private final LogEntryRepository logEntryRepository;
 
   /**

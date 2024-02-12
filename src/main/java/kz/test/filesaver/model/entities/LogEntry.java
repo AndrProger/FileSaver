@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "log_entries")
 @Getter
 @Setter
 @NoArgsConstructor

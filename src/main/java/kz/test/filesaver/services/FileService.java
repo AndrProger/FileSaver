@@ -98,6 +98,6 @@ public class FileService {
     }
     error("Command not supported: " + commandRequestDTO.getCommand());
     throw new UnsupportedOperationException(
-            "Command not supported: " + commandRequestDTO.getCommand());
+        "Command not supported: " + commandRequestDTO.getCommand());
   }
 }
