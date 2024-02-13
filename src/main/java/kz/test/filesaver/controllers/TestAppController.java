@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class TestAppController {
 
   /**
-   * Handles GET requests to the "/test" endpoint.
+   * Handles GET requests to the "/app" endpoint.
    *
    * @return app HTML page for test functionality.
    */
